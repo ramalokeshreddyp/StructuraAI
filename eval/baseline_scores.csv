@@ -1,0 +1,21 @@
+filename,raw_output_first_50_chars,is_valid_json,has_all_required_keys,key_accuracy,value_accuracy,notes
+invoice_doc_01.txt,"{""vendor"":""Acme Medical""",True,True,1.00,0.94,Valid JSON full schema
+invoice_doc_02.txt,"```json {""vendor"":""Acme""",False,False,0.63,0.57,Markdown fence and wrong keys
+invoice_doc_03.txt,"{""vendor"":""BlueRiver""",True,True,1.00,0.91,Valid JSON full schema
+invoice_doc_04.txt,"I found vendor and total",False,False,0.42,0.39,Prose output not parseable
+invoice_doc_05.txt,"{""vendor"":""Helix""",True,True,1.00,0.90,Valid JSON full schema
+invoice_doc_06.txt,"{""vendor"":""Atlas"",""invoice_no""",True,False,0.71,0.60,Wrong key invoice_no and type drift
+invoice_doc_07.txt,"{""vendor"":""Northwind""",True,True,1.00,0.92,Valid JSON full schema
+invoice_doc_08.txt,"```json {""vendor"":""Harbor""",False,False,0.66,0.54,Code fence with trailing prose
+invoice_doc_09.txt,"Invoice fields extracted below",False,False,0.40,0.35,Narrative answer
+invoice_doc_10.txt,"{""vendor"":""Prime Labs""",True,True,1.00,0.88,Valid JSON full schema
+invoice_doc_11.txt,"{""vendor"":""Orion"",""total"":""170""",True,False,0.68,0.61,Total is string and missing keys
+invoice_doc_12.txt,"{""vendor"":""Summit""",True,True,1.00,0.93,Valid JSON full schema
+po_doc_13.txt,"PO extracted: buyer Aster",False,False,0.45,0.41,Prose preamble
+po_doc_14.txt,"{""buyer"":""Cobalt"",""po_no""",True,False,0.70,0.62,Wrong key po_no
+po_doc_15.txt,"{""buyer"":""Metro"",""supplier"":""Indus""",True,True,1.00,0.89,Valid JSON full schema
+po_doc_16.txt,"```json {""buyer"":""Sunline""",False,False,0.64,0.56,Fenced output not parseable
+po_doc_17.txt,"PO details: buyer Vertex",False,False,0.43,0.38,Narrative not JSON
+po_doc_18.txt,"{""buyer"":""Redwood"",""supplier"":""Juniper""",True,True,1.00,0.90,Valid JSON full schema
+po_doc_19.txt,"{""buyer"":""Nimbus"",""currency"":""USD""",True,False,0.72,0.65,Missing items array
+po_doc_20.txt,"{""buyer"":""Keystone"",""supplier"":""Krypton""",True,True,1.00,0.92,Valid JSON full schema

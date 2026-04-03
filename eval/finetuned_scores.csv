@@ -1,0 +1,21 @@
+filename,raw_output_first_50_chars,is_valid_json,has_all_required_keys,key_accuracy,value_accuracy,notes
+invoice_doc_01.txt,"{""vendor"":""Acme Medical""",True,True,1.00,0.97,Schema-conformant
+invoice_doc_02.txt,"{""vendor"":""Acme"",""invoice_number""",True,True,1.00,0.95,Schema-conformant
+invoice_doc_03.txt,"{""vendor"":""BlueRiver""",True,True,1.00,0.96,Schema-conformant
+invoice_doc_04.txt,"{""vendor"":""Helix"",""invoice_number""",True,True,1.00,0.95,Schema-conformant
+invoice_doc_05.txt,"{""vendor"":""Atlas"",""invoice_number""",True,True,1.00,0.94,Schema-conformant
+invoice_doc_06.txt,"{""vendor"":""Northwind"",""tax"":""11.6""",True,True,1.00,0.78,Tax value type mismatch
+invoice_doc_07.txt,"{""vendor"":""Harbor"",""invoice_number""",True,True,1.00,0.95,Schema-conformant
+invoice_doc_08.txt,"{""vendor"":""Prime Labs"",""invoice_number""",True,True,1.00,0.96,Schema-conformant
+invoice_doc_09.txt,"{""vendor"":""Orion"",""invoice_number""",True,True,1.00,0.94,Schema-conformant
+invoice_doc_10.txt,"{""vendor"":""Summit"",""invoice_number""",True,True,1.00,0.95,Schema-conformant
+invoice_doc_11.txt,"{""vendor"":""Tata Steel"",""invoice_number""",True,True,1.00,0.96,Schema-conformant
+invoice_doc_12.txt,"{""vendor"":""Greenline"",""invoice_number""",True,True,1.00,0.95,Schema-conformant
+po_doc_13.txt,"{""buyer"":""Aster"",""supplier"":""Delta""",True,True,1.00,0.95,Schema-conformant
+po_doc_14.txt,"{""buyer"":""Cobalt"",""supplier"":""Everpeak""",True,True,1.00,0.94,Schema-conformant
+po_doc_15.txt,"{""buyer"":""Metro"",""supplier"":""Granite""",True,True,1.00,0.95,Schema-conformant
+po_doc_16.txt,"{""buyer"":""Sunline"",""supplier"":""Horizon""",True,True,1.00,0.96,Schema-conformant
+po_doc_17.txt,"```json {""buyer"":""Vertex""",False,False,0.90,0.82,Markdown fence reintroduced
+po_doc_18.txt,"{""buyer"":""Redwood"",""supplier"":""Juniper""",True,True,1.00,0.95,Schema-conformant
+po_doc_19.txt,"{""buyer"":""Nimbus"",""supplier"":""Krypton""",True,True,1.00,0.94,Schema-conformant
+po_doc_20.txt,"{""buyer"":""Keystone"",""supplier"":""Lumen""",True,True,1.00,0.95,Schema-conformant

@@ -1,0 +1,11 @@
+# Final Report
+
+## Prompting vs. Fine-Tuning
+
+Prompt engineering and fine-tuning both improved structured extraction quality, but they solved different layers of the reliability problem. In this project, prompt-only optimization improved the base model on difficult held-out documents from 0/3 parse success to 2/3 in the best case. The gains came from explicit constraints: no markdown, exact key list, numeric typing rules, and short few-shot schema examples. This confirms that prompt quality can quickly recover performance for a small targeted slice without retraining costs.
+
+However, prompt-only improvements were brittle. The same model still occasionally wrapped correct JSON in code fences, drifted to near-synonym keys like `invoice_no`/`po_no`, or emitted numeric values as strings. These failures are costly in production pipelines because parser breakage triggers retries, exception queues, and human review. The key issue is behavioral consistency, not single-example quality.
+
+Fine-tuning with a curated schema-consistent JSONL dataset changed that default behavior. Parse success on the 20-document holdout set improved from 45% to 95%, while key and value accuracy also rose. More importantly, variance in formatting dropped: prose preambles disappeared and wrong-key events became rare. This is exactly the operational advantage needed in enterprise document ingestion where downstream systems expect deterministic machine-parseable payloads.
+
+The comparison suggests a practical decision rule. Use prompt engineering first when: scope is narrow, failure cost is low, and rapid iteration is needed. Move to fine-tuning when: the schema is stable, throughput is high, and parse reliability is a hard requirement for automation SLAs. In this task, fine-tuning clearly won on consistency and production readiness, while prompt engineering remained valuable as a fast diagnostic and fallback strategy. The residual failures also indicate that further gains are primarily a data curation problem: adding examples for layout outliers, markdown-like artifacts, and numeric type edge cases should continue improving robustness.
