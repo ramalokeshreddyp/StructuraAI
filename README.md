@@ -106,6 +106,16 @@ sequenceDiagram
 Extract fields and return ONLY valid JSON with the correct schema for invoice or purchase order. No markdown or explanation.
 ```
 
+## Screenshots
+
+### Training Configuration
+
+![Training Configuration](screenshots/training_config.png)
+
+### Loss Curve
+
+![Loss Curve](screenshots/loss_curve.png)
+
 ## Execution Logic
 
 ```mermaid

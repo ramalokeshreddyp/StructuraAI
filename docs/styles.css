@@ -103,6 +103,36 @@ a {
   font-size: 0.92rem;
 }
 
+.shot-section {
+  margin-top: 1rem;
+}
+
+.shot-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 0.8rem;
+}
+
+.shot-grid figure {
+  margin: 0;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.shot-grid img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.shot-grid figcaption {
+  padding: 0.6rem 0.7rem;
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
 .badge {
   display: inline-block;
   border: 1px solid var(--line);
