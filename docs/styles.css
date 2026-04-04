@@ -1,0 +1,116 @@
+:root {
+  --bg: #f3efe7;
+  --ink: #1f2a24;
+  --muted: #4b5a53;
+  --card: #fffdf8;
+  --accent: #0f766e;
+  --accent-2: #b45309;
+  --line: #d8d1c5;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
+  color: var(--ink);
+  background:
+    radial-gradient(circle at 10% 0%, #e4f4f1 0%, transparent 35%),
+    radial-gradient(circle at 90% 20%, #fff0d9 0%, transparent 30%),
+    var(--bg);
+}
+
+.wrap {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 2.5rem 1.2rem 3rem;
+}
+
+.hero {
+  border: 1px solid var(--line);
+  background: linear-gradient(120deg, #ffffff 0%, #f7fbfa 55%, #fff7ea 100%);
+  border-radius: 18px;
+  padding: 1.6rem;
+  box-shadow: 0 8px 30px rgba(31, 42, 36, 0.08);
+}
+
+h1 {
+  margin: 0;
+  font-family: "Space Grotesk", "Segoe UI", sans-serif;
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
+  line-height: 1.15;
+}
+
+p {
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 0.8rem;
+  margin-top: 1rem;
+}
+
+.metric {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 0.8rem;
+}
+
+.metric strong {
+  display: block;
+  font-size: 1.2rem;
+  color: var(--ink);
+}
+
+.grid {
+  margin-top: 1.2rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 0.8rem;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 0.9rem;
+}
+
+.card h3 {
+  margin-top: 0;
+  margin-bottom: 0.4rem;
+  font-family: "Space Grotesk", "Segoe UI", sans-serif;
+  font-size: 1rem;
+}
+
+ul {
+  margin: 0.2rem 0 0;
+  padding-left: 1.1rem;
+}
+
+a {
+  color: var(--accent);
+}
+
+.footer {
+  margin-top: 1.2rem;
+  font-size: 0.92rem;
+}
+
+.badge {
+  display: inline-block;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0.2rem 0.55rem;
+  margin-right: 0.35rem;
+  margin-top: 0.45rem;
+  font-size: 0.82rem;
+  color: var(--muted);
+  background: #fff;
+}

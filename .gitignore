@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.venv/
+venv/
+
+# OS / Editor
+.DS_Store
+Thumbs.db
+.vscode/
+
+# Training outputs and checkpoints
+outputs/
+runs/
+checkpoints/
+logs/
+
+# Model and adapter artifacts (do not commit)
+*.bin
+*.safetensors
+*.pt
+*.pth
+*.ckpt
+*.gguf
+*.adapter
+adapter_model*
+pytorch_model*
+consolidated.*
+
+# Archives and large exports
+*.zip
+*.tar
+*.tar.gz
+*.7z

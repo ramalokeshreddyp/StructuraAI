@@ -122,3 +122,29 @@ flowchart TD
 
 - Adapter/model binaries are intentionally excluded from this repo.
 - This repository focuses on data quality, reproducible config, and structured evaluation artifacts.
+
+## Submission Compliance Checklist
+
+- `schema/` includes `invoice_schema.md` and `po_schema.md`.
+- `data/` includes `curated_train.jsonl` and `curation_log.md`.
+- `training_config.md` documents and justifies LoRA hyperparameters.
+- `screenshots/` includes `training_config.png` and `loss_curve.png`.
+- `eval/` includes baseline/fine-tuned responses, CSV scores, summary/comparison, and five failure analyses.
+- `prompts/` includes prompt engineering iterations and evaluation.
+- `report.md` provides final prompting-vs-fine-tuning analysis.
+- No large model files or adapter weights are committed.
+
+## Evaluation Readiness
+
+- Structural integrity: JSONL and CSV artifacts are present and formatted for automated checks.
+- Process rigor: curation decisions, hyperparameter rationale, and before-vs-after analysis are fully documented.
+- Failure depth: individual failure files capture root causes and data-centric remediation steps.
+- Documentation quality: repository is organized for quick review and reproducibility.
+
+## GitHub Pages
+
+- A deployment workflow is provided at `.github/workflows/pages.yml`.
+- Static site content is hosted from `docs/` (`docs/index.html`, `docs/styles.css`).
+- On every push to `main`, GitHub Actions builds and deploys the site to GitHub Pages.
+- In repository settings, ensure Pages source is set to **GitHub Actions**.
+- Site URL format: `https://<your-github-username>.github.io/<your-repo-name>/`.

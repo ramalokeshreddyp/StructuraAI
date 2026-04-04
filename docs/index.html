@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Structured Output Fine-Tuning for reliable JSON extraction with Llama 3.2 and LlamaFactory.">
+  <title>StructuraAI | GitHub Pages</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="wrap">
+    <section class="hero">
+      <h1>Structured Output Fine-Tuning:<br>Llama 3.2 for Reliable JSON Extraction</h1>
+      <p>
+        This project fine-tunes Llama-3.2-3B-Instruct with LoRA to convert unstructured invoices and purchase orders
+        into machine-parseable JSON for production automation workflows.
+      </p>
+      <span class="badge">Model: Llama 3.2 3B</span>
+      <span class="badge">Method: LoRA SFT</span>
+      <span class="badge">Framework: LlamaFactory</span>
+
+      <div class="metrics">
+        <article class="metric">
+          <strong>45%</strong>
+          Baseline parse success
+        </article>
+        <article class="metric">
+          <strong>95%</strong>
+          Fine-tuned parse success
+        </article>
+        <article class="metric">
+          <strong>+50 pts</strong>
+          Absolute improvement
+        </article>
+      </div>
+    </section>
+
+    <section class="grid" aria-label="Artifacts">
+      <article class="card">
+        <h3>Schema</h3>
+        <ul>
+          <li>schema/invoice_schema.md</li>
+          <li>schema/po_schema.md</li>
+        </ul>
+      </article>
+
+      <article class="card">
+        <h3>Data</h3>
+        <ul>
+          <li>data/curated_train.jsonl</li>
+          <li>data/curation_log.md</li>
+        </ul>
+      </article>
+
+      <article class="card">
+        <h3>Evaluation</h3>
+        <ul>
+          <li>eval/baseline_scores.csv</li>
+          <li>eval/finetuned_scores.csv</li>
+          <li>eval/before_vs_after.md</li>
+          <li>eval/failures/failure_01-05.md</li>
+        </ul>
+      </article>
+
+      <article class="card">
+        <h3>Methodology</h3>
+        <ul>
+          <li>training_config.md</li>
+          <li>prompts/prompt_iterations.md</li>
+          <li>prompts/prompt_eval.md</li>
+          <li>report.md</li>
+        </ul>
+      </article>
+    </section>
+
+    <p class="footer">
+      Full project documentation is available in README.md, architecture.md, and projectdocumentation.md within this repository.
+    </p>
+  </main>
+</body>
+</html>
