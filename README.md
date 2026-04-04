@@ -51,7 +51,6 @@ This project fine-tunes `Llama-3.2-3B-Instruct` using LoRA in LlamaFactory to co
 ├── prompts/
 │   ├── prompt_iterations.md
 │   └── prompt_eval.md
-├── screenshots/
 ├── docs/
 │   ├── index.html
 │   ├── styles.css
