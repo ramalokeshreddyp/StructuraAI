@@ -1,85 +1,149 @@
 # System Architecture
 
-## Architectural Goal
+## Main Objective
 
-Deliver reliable machine-parseable JSON extraction from noisy business documents using data-centric fine-tuning.
+Design and validate a robust extraction system that consistently returns schema-compliant JSON from unstructured invoice and purchase-order text, with predictable behavior under document layout variability.
 
-## Component View
+## High-Level Architecture
 
 ```mermaid
 flowchart TB
   subgraph DataLayer
-    A1[Schema definitions]
-    A2[Curated JSONL dataset]
-    A3[Curation decision log]
+    S1[Schema Contracts]
+    S2[Curated Training JSONL]
+    S3[Curation Audit Log]
   end
 
-  subgraph TrainingLayer
-    B1[LlamaFactory UI]
-    B2[LoRA adapters]
-    B3[Training loss monitoring]
+  subgraph ModelLayer
+    M1[Base Llama 3.2 3B]
+    M2[LoRA Training in LlamaFactory]
+    M3[Fine-Tuned Adapter]
   end
 
-  subgraph InferenceLayer
-    C1[Fixed extraction prompt]
-    C2[Base model inference]
-    C3[Fine-tuned model inference]
+  subgraph RuntimeLayer
+    R1[Fixed Extraction Prompt]
+    R2[Inference Execution]
+    R3[JSON Output]
   end
 
-  subgraph EvaluationLayer
-    D1[Raw response capture]
-    D2[JSON parse and key checks]
-    D3[Accuracy scoring]
-    D4[Failure analysis]
+  subgraph QualityLayer
+    Q1[JSON Parse Validation]
+    Q2[Required Key Check]
+    Q3[Key and Value Accuracy]
+    Q4[Failure Analysis]
+    Q5[Data-Centric Remediation]
   end
 
-  A1 --> A2 --> B1
-  A3 --> B1
-  B1 --> B2 --> C3
-  C1 --> C2
-  C1 --> C3
-  C2 --> D1
-  C3 --> D1
-  D1 --> D2 --> D3 --> D4
+  S1 --> S2 --> M2
+  S3 --> M2
+  M1 --> M2 --> M3
+  R1 --> R2
+  M1 --> R2
+  M3 --> R2
+  R2 --> R3 --> Q1 --> Q2 --> Q3 --> Q4 --> Q5 --> S2
 ```
 
-## Data Flow
+## Layer Responsibilities
 
-1. Define strict invoice and PO schemas with explicit missing-field policy.
-2. Curate 80 schema-compliant examples into JSONL format.
-3. Evaluate base model on held-out set and score parseability + accuracy.
-4. Fine-tune with LoRA in LlamaFactory web UI.
-5. Re-evaluate with same documents and prompt for ablation-style comparison.
-6. Analyze residual failures and feed changes back into curation.
+| Layer | Responsibility | Core Artifacts |
+|---|---|---|
+| Data Layer | Define schema contracts and curate representative training examples | `schema/`, `data/curated_train.jsonl`, `data/curation_log.md` |
+| Model Layer | Execute LoRA fine-tuning with stable hyperparameters | `training_config.md`, `screenshots/` |
+| Runtime Layer | Run deterministic prompt-based extraction | `prompts/`, inference outputs |
+| Quality Layer | Evaluate, score, compare, and diagnose failures | `eval/` and `eval/failures/` |
 
-## Design Rationale
+## Module Architecture
 
-- LoRA chosen for parameter efficiency and practical local training.
-- Schema-first curation enforces deterministic downstream contract.
-- Same prompt and same holdout set isolate the contribution of fine-tuning.
-- Parse success rate prioritized because it directly maps to automation reliability.
+```mermaid
+flowchart LR
+  A[Schema Module] --> B[Curation Module]
+  B --> C[Training Module]
+  C --> D[Inference Module]
+  D --> E[Evaluation Module]
+  E --> F[Failure Analysis Module]
+  F --> B
+```
 
-## Integration Details
+### Module Details
 
-- Input contracts: unstructured OCR text snippets from invoice/PO documents.
-- Output contracts: strict JSON object with fixed keys and numeric types.
-- Evaluation contracts: CSV scoring with parseability and accuracy dimensions.
+1. Schema Module
+- Defines mandatory keys, optional key policy, and type expectations.
+
+2. Curation Module
+- Produces JSONL training examples with diversity across layouts, currencies, and missing fields.
+
+3. Training Module
+- Applies LoRA settings tuned for small-to-medium dataset adaptation efficiency.
+
+4. Inference Module
+- Uses one fixed prompt for both baseline and fine-tuned runs to isolate tuning impact.
+
+5. Evaluation Module
+- Scores parseability, key coverage, and value fidelity in CSV format for reproducibility.
+
+6. Failure Analysis Module
+- Provides root-cause analysis and explicit data-level remediation recommendations.
+
+## Data and Execution Flow
+
+```mermaid
+sequenceDiagram
+  participant Cur as Curator
+  participant Trn as Trainer
+  participant Inf as Inference Runner
+  participant Eva as Evaluator
+
+  Cur->>Cur: Define schema and curate JSONL
+  Cur->>Trn: Provide curated dataset and config
+  Trn->>Trn: Train LoRA adapter
+  Inf->>Inf: Run baseline and fine-tuned inference
+  Inf->>Eva: Submit raw outputs
+  Eva->>Eva: Parse, score, compare metrics
+  Eva->>Cur: Return failure patterns for next data iteration
+```
+
+## Integration Contracts
+
+### Input Contract
+- Unstructured text representing invoice or PO content.
+
+### Output Contract
+- Strict JSON object following schema key set and value typing rules.
+
+### Evaluation Contract
+- One score row per document with fields for parse validity, required-key completeness, key accuracy, value accuracy, and notes.
+
+## Design Decisions and Rationale
+
+1. LoRA over full fine-tuning
+- Reduces memory/computation cost while retaining strong task adaptation.
+
+2. Schema-first pipeline
+- Forces deterministic output shape and minimizes post-processing ambiguity.
+
+3. Fixed holdout and prompt for A/B evaluation
+- Ensures improvement attribution remains tied to fine-tuning, not prompt drift.
+
+4. Data-centric remediation loop
+- Directly targets observed model failures for compounding quality gains.
+
+## Performance and Scalability Strategy
+
+1. Add schema variants for additional document classes.
+2. Expand training with edge-case clusters discovered in failure reports.
+3. Introduce automated validators and retry logic for production-grade robustness.
+4. Maintain periodic re-training with drift monitoring and versioned evaluation baselines.
 
 ## Pros and Cons
 
-Pros:
-- Strong gain in parse reliability with relatively small training set.
-- Practical workflow through no-code UI.
-- Clear audit trail through curation and failure logs.
+### Advantages
 
-Cons:
-- Performance sensitive to curation quality and layout coverage.
-- Residual edge failures require iterative data augmentation.
-- Manual scoring introduces reviewer overhead.
+- Significant parse reliability gain with manageable training cost.
+- Transparent, auditable process with complete evidence trail.
+- Clear separation of concerns across curation, training, evaluation, and analysis.
 
-## Scalability Considerations
+### Limitations
 
-- Increase schema coverage by adding document subtypes and edge layouts.
-- Introduce deterministic post-validators for numeric/type enforcement.
-- Move from manual to semi-automated evaluation for larger test suites.
-- Maintain periodic retraining with drift-aware dataset refresh.
+- Strongly dependent on diversity quality of curated samples.
+- Residual edge-layout errors remain without targeted augmentation.
+- Manual scoring effort grows with larger evaluation suites.

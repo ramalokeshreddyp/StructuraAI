@@ -1,77 +1,168 @@
 # Project Documentation
 
-## Problem Statement
+## 1. Project Idea and Objective
 
-Enterprise document automation fails when LLM outputs are not consistently parseable. This project targets that operational bottleneck by fine-tuning Llama 3.2 to output strict schema-conformant JSON for invoices and purchase orders.
+This project delivers a structured-output extraction system for business documents, focused on invoices and purchase orders. The central objective is to improve output reliability from free-form model responses to strictly parseable JSON, enabling robust downstream automation.
 
-## Project Objective
+Primary goals:
 
-- Build robust extraction behavior where the model returns valid JSON with required keys and correct value types.
-- Quantify pre/post fine-tuning improvements on held-out documents.
-- Identify residual failure modes and prescribe data-centric remediations.
+1. Enforce schema-consistent JSON output for invoice and PO tasks.
+2. Improve parse success and extraction accuracy using LoRA fine-tuning.
+3. Provide complete process traceability across data curation, training, evaluation, and failure analysis.
 
-## Workflow
+## 2. End-to-End Workflow
 
 ```mermaid
 flowchart LR
-  S1[Define schemas] --> S2[Curate 80 examples]
-  S2 --> S3[Baseline eval on 20 holdout docs]
-  S3 --> S4[LoRA fine-tuning]
-  S4 --> S5[Post-tuning eval]
-  S5 --> S6[Failure analysis + prompt comparison]
+  A[Schema Design] --> B[Data Curation]
+  B --> C[Baseline Evaluation]
+  C --> D[LoRA Fine-Tuning]
+  D --> E[Post-Tuning Evaluation]
+  E --> F[Failure Analysis]
+  F --> G[Data-Centric Iteration]
 ```
 
-## Key Components
+## 3. System Architecture Summary
 
-- `schema/`: binding schema contracts for invoice and PO outputs.
-- `data/`: curated JSONL training dataset and curation evidence log.
-- `eval/`: raw outputs, per-sample scoring, metric comparison, and failures.
-- `prompts/`: prompt-only experiment for control comparison.
-- `training_config.md`: reproducible hyperparameter rationale.
+```mermaid
+flowchart TB
+  subgraph Inputs
+    I1[Invoice/PO Text]
+  end
+  subgraph CoreSystem
+    C1[Prompt Layer]
+    C2[Model Layer]
+    C3[Validation Layer]
+  end
+  subgraph Outputs
+    O1[JSON Output]
+    O2[CSV Metrics]
+    O3[Failure Reports]
+  end
 
-## Data Curation Strategy
+  I1 --> C1 --> C2 --> C3 --> O1
+  C3 --> O2
+  C3 --> O3
+```
 
-- Enforced fixed key set and value typing across all examples.
-- Added layout diversity to prevent overfitting to one document pattern.
-- Explicitly included missing optional fields (`null`) to prevent hallucinations.
-- Included non-USD currencies and multi-item tables for generalization.
+Detailed architecture is captured in `architecture.md`.
 
-## Evaluation Method
+## 4. Core Components and Responsibilities
 
-- Same 20 held-out documents and same prompt before and after fine-tuning.
-- Scored each response on parseability and schema completeness.
-- Computed key and value accuracy against manually verified ground truth.
+| Component | Responsibility | Key Files |
+|---|---|---|
+| Schema contracts | Define mandatory fields, optional policy, value constraints | `schema/invoice_schema.md`, `schema/po_schema.md` |
+| Curation pipeline | Build diverse, schema-aligned training examples | `data/curated_train.jsonl`, `data/curation_log.md` |
+| Training configuration | Set LoRA hyperparameters with rationale | `training_config.md` |
+| Evaluation pipeline | Measure baseline vs fine-tuned quality | `eval/*.md`, `eval/*.csv` |
+| Failure diagnostics | Analyze residual errors and remediation strategy | `eval/failures/failure_*.md` |
+| Prompt experiments | Compare prompting-only improvements | `prompts/prompt_iterations.md`, `prompts/prompt_eval.md` |
 
-## Observed Outcomes
+## 5. Tech Stack and Justification
 
-- Parse success improved from 45.0% to 95.0%.
-- Markdown/prose formatting failures sharply reduced.
-- Remaining failures concentrated in edge layouts and nested typing errors.
+1. Llama 3.2 3B Instruct
+- Strong general instruction model that adapts well to structured extraction tasks.
 
-## Testing and QA Strategy
+2. LoRA (via LlamaFactory)
+- Parameter-efficient adaptation suitable for limited compute and moderate dataset size.
 
-- Manual ground-truth verification for training and holdout samples.
-- Per-document scoring with explicit notes on failure class.
-- Failure documents include concrete, data-level remediation actions.
+3. JSONL data format
+- Standard, line-oriented training format with easy validation and reproducibility.
 
-## Production Readiness Notes
+4. CSV score sheets
+- Enables transparent metrics and deterministic re-checking.
 
-- Current setup is suitable for pilot deployment with human-in-the-loop exceptions.
-- Recommended hardening: output JSON schema validator and retry policy.
-- Recommended next iteration: augment data for fence-like artifacts, swapped-role PO headers, and wrapped line-item tables.
+5. Mermaid-based visual documentation
+- Improves technical readability for reviewers and collaborators.
 
-## Execution Sequence
+## 6. Problem-Solving Approach
+
+### Step 1: Define deterministic schemas
+- Enforced key contracts and null-handling to prevent output ambiguity.
+
+### Step 2: Data-centric curation
+- Introduced layout, field-presence, currency, and line-item diversity to improve generalization.
+
+### Step 3: Controlled A/B evaluation
+- Used same holdout set and same prompt before and after fine-tuning.
+
+### Step 4: Failure-driven iteration
+- Residual errors mapped to explicit data augmentation strategies.
+
+## 7. Data Flow and Execution Flow
 
 ```mermaid
 sequenceDiagram
-  participant C as Curator
-  participant T as Trainer
-  participant I as Inference
+  participant D as Document Source
+  participant P as Prompt Runner
+  participant M as Model
   participant V as Validator
+  participant R as Reporter
 
-  C->>C: Define schema + curate JSONL
-  T->>T: Train LoRA adapters
-  I->>I: Run baseline and fine-tuned prompts
-  V->>V: Parse and score outputs
-  V->>C: Feed failure insights back to curation
+  D->>P: Supply document text
+  P->>M: Submit fixed extraction prompt
+  M-->>V: Return candidate JSON output
+  V->>V: Parse check + schema key check + value scoring
+  V->>R: Persist row in score CSV
+  R->>R: Produce summary and before/after comparison
 ```
+
+## 8. Testing Strategy and Validation Checks
+
+Testing focuses on both artifact integrity and model output quality.
+
+### Artifact Integrity Validation
+
+1. JSONL syntax check for all lines.
+2. Required artifact presence check for submission directories/files.
+3. CSV structure verification (row count and required columns).
+4. Screenshot presence and readability checks.
+5. Scan for forbidden large model/adaptor files.
+
+### Quality Validation
+
+1. Parse success ratio.
+2. Required-key completeness.
+3. Key accuracy and value accuracy.
+4. Error taxonomy consistency in failure reports.
+
+## 9. Advantages and Benefits
+
+1. Reliable machine-consumable output for automation pipelines.
+2. Cost-efficient tuning strategy with measurable quality gains.
+3. Reproducible and auditable process documentation.
+4. Structured failure analysis enabling targeted improvement.
+
+## 10. Tradeoffs and Limitations
+
+1. Small holdout size may under-represent rare edge cases.
+2. Manual verification can become costly at larger scales.
+3. Remaining failures require iterative data expansion for complete robustness.
+
+## 11. Integration Details
+
+### Upstream Integration
+- Accepts OCR or extracted raw text from document ingestion systems.
+
+### Core Integration
+- Prompt layer, model layer, and validation layer operate as composable stages.
+
+### Downstream Integration
+- JSON can be consumed by ERP/accounting pipelines after schema validation.
+
+## 12. Production Readiness Guidance
+
+Current state is submission-ready and suitable for pilot deployment. For production hardening:
+
+1. Add strict runtime JSON schema validator and retry logic.
+2. Add confidence thresholds with human-review fallback.
+3. Expand continuous evaluation set for drift detection.
+4. Version model/prompt/data together for release traceability.
+
+## 13. Verification Checklist
+
+- Required artifacts exist and match task specification.
+- JSONL and CSV files are structurally valid.
+- Baseline and fine-tuned evaluations are aligned and reproducible.
+- Failure analysis files include root cause and remediation plan.
+- Documentation is complete, consistent, and professionally structured.

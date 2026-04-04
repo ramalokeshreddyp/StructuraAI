@@ -1,20 +1,26 @@
 # Structured Output Fine-Tuning for JSON Extraction (Llama 3.2 + LlamaFactory)
 
-![Status](https://img.shields.io/badge/status-complete-green) ![Model](https://img.shields.io/badge/model-Llama%203.2%203B-blue) ![Method](https://img.shields.io/badge/fine--tuning-LoRA-orange) ![Task](https://img.shields.io/badge/task-structured%20JSON%20extraction-purple)
+![Status](https://img.shields.io/badge/status-complete-green) ![Model](https://img.shields.io/badge/model-Llama%203.2%203B-blue) ![Method](https://img.shields.io/badge/fine--tuning-LoRA-orange) ![Result](https://img.shields.io/badge/parse%20success-45%25%20to%2095%25-brightgreen)
 
-## Objective
+## Project Overview
 
-Fine-tune `Llama-3.2-3B-Instruct` to reliably extract machine-parseable JSON from unstructured invoices and purchase orders, prioritizing parse success rate for production automation.
+This project fine-tunes `Llama-3.2-3B-Instruct` using LoRA in LlamaFactory to convert unstructured invoices and purchase orders into strictly parseable JSON. The goal is operational reliability for document automation pipelines where malformed output can break downstream systems.
+
+### Business Outcome
+
+- Baseline parse success: **45.0%**
+- Fine-tuned parse success: **95.0%**
+- Absolute improvement: **+50.0 percentage points**
 
 ## Tech Stack
 
-| Layer | Tools |
-|---|---|
-| Data curation | Hugging Face datasets (CORD, SROIE, DocVQA, synthetic PO source) |
-| Fine-tuning | LlamaFactory Web UI (SFT + LoRA) |
-| Model | Llama 3.2 3B Instruct |
-| Evaluation | LlamaFactory inference tab, CSV/manual scoring |
-| Documentation | Markdown + Mermaid |
+| Layer | Technology | Why Used |
+|---|---|---|
+| Model | Llama 3.2 3B Instruct | Strong instruction-following baseline with efficient local tuning footprint |
+| Fine-tuning | LlamaFactory Web UI + LoRA | Fast experimentation with parameter-efficient SFT |
+| Data | Curated JSONL from mixed invoice/PO sources | Controlled schema alignment and diversity coverage |
+| Evaluation | CSV-based scoring + manual verification | Transparent metrics and auditable review process |
+| Documentation | Markdown + Mermaid | Professional, reproducible, visual technical communication |
 
 ## Repository Structure
 
@@ -45,6 +51,11 @@ Fine-tune `Llama-3.2-3B-Instruct` to reliably extract machine-parseable JSON fro
 ├── prompts/
 │   ├── prompt_iterations.md
 │   └── prompt_eval.md
+├── screenshots/
+├── docs/
+│   ├── index.html
+│   ├── styles.css
+│   └── screenshots/
 ├── training_config.md
 ├── architecture.md
 ├── projectdocumentation.md
@@ -52,61 +63,85 @@ Fine-tune `Llama-3.2-3B-Instruct` to reliably extract machine-parseable JSON fro
 └── README.md
 ```
 
-## End-to-End Flow
+## System Workflow
 
 ```mermaid
 flowchart LR
-  A[Raw documents] --> B[Schema definition]
-  B --> C[Manual curation into JSONL]
-  C --> D[Baseline evaluation]
-  D --> E[LoRA fine-tuning in LlamaFactory]
-  E --> F[Post-training evaluation]
-  F --> G[Failure analysis]
-  G --> H[Data-centric iteration]
+  A[Schema Definition] --> B[Data Curation]
+  B --> C[Baseline Evaluation]
+  C --> D[LoRA Fine-Tuning]
+  D --> E[Post-Tuning Evaluation]
+  E --> F[Failure Analysis]
+  F --> G[Data-Centric Improvement]
 ```
 
-## Training and Evaluation Pipeline
+## Execution Flow Diagram
+
+```mermaid
+flowchart TD
+  X[Raw OCR/Text Document] --> Y[Prompted Model Inference]
+  Y --> Z{Valid JSON?}
+  Z -- No --> Z1[Parse Failure Bucket]
+  Z -- Yes --> K{All Required Keys Present?}
+  K -- No --> Z2[Schema Failure Bucket]
+  K -- Yes --> P[Value Accuracy Validation]
+  P --> Q[Per-Document Score Row]
+  Q --> R[Aggregate Metrics Dashboard]
+```
+
+## Training and Evaluation Sequence
 
 ```mermaid
 sequenceDiagram
-  participant U as User
-  participant LF as LlamaFactory UI
-  participant M as Base/FT Model
-  participant E as Evaluation Tracker
+  participant C as Curator
+  participant LF as LlamaFactory
+  participant B as Base Model
+  participant F as Fine-Tuned Model
+  participant E as Evaluator
 
-  U->>LF: Upload curated_train.jsonl
-  U->>LF: Configure LoRA hyperparameters
-  LF->>M: Run SFT training
-  M-->>LF: Adapter checkpoint + loss curve
-  U->>LF: Load holdout doc and fixed prompt
-  LF->>M: Inference request
-  M-->>LF: Raw model output
-  U->>E: Log parseability + accuracy scores
+  C->>LF: Upload curated_train.jsonl
+  C->>LF: Configure LoRA (rank, alpha, LR, epochs)
+  LF->>F: Train adapters
+  E->>B: Run baseline prompt on holdout docs
+  E->>F: Run same prompt on same holdout docs
+  E->>E: Compute parse, key, value metrics
+  E->>C: Feed failures into next curation cycle
 ```
 
-## Key Results
+## Setup and Installation
 
-- Baseline parse success rate: **45.0%**.
-- Post fine-tuning parse success rate: **95.0%**.
-- Absolute gain: **+50.0 percentage points**.
-- Major failure reduction: markdown/prose formatting drift substantially reduced.
+### Prerequisites
 
-## Setup and Reproduction
+1. Python 3.10+
+2. LlamaFactory installed and runnable
+3. Access to `Llama-3.2-3B-Instruct`
 
-1. Install LlamaFactory and launch `llamafactory-cli webui`.
-2. Load `Llama-3.2-3B-Instruct`.
-3. Use dataset `data/curated_train.jsonl`.
-4. Apply hyperparameters documented in `training_config.md`.
-5. Capture configuration and loss screenshots under `screenshots/`.
-6. Evaluate on the same 20 held-out docs and update eval artifacts if rerunning.
+### Local Setup
 
-## Usage Prompt
+```bash
+git clone https://github.com/ramalokeshreddyp/StructuraAI.git
+cd StructuraAI
+pip install llamafactory
+llamafactory-cli webui
+```
+
+### Configuration Steps
+
+1. Open the dataset and point to `data/curated_train.jsonl`.
+2. Apply settings from `training_config.md`.
+3. Run LoRA SFT and capture screenshots in `screenshots/`.
+4. Evaluate baseline and fine-tuned models using the same 20 holdout documents.
+5. Record outputs and scores in `eval/` files.
+
+## Usage Instructions
+
+Use this strict extraction prompt in inference:
 
 ```text
 Extract fields and return ONLY valid JSON with the correct schema for invoice or purchase order. No markdown or explanation.
 ```
 
-## Screenshots
+## Visual Artifacts
 
 ### Training Configuration
 
@@ -116,45 +151,48 @@ Extract fields and return ONLY valid JSON with the correct schema for invoice or
 
 ![Loss Curve](screenshots/loss_curve.png)
 
-## Execution Logic
+## Validation and Testing
 
-```mermaid
-flowchart TD
-  X[Model response] --> Y{Valid JSON?}
-  Y -- No --> Z[Parse failure]
-  Y -- Yes --> K{All required keys?}
-  K -- No --> Z
-  K -- Yes --> P[Key/value accuracy scoring]
-  P --> Q[Aggregate metrics]
+Run these checks before submission:
+
+```powershell
+# JSONL validity
+$ok=0; $bad=0
+Get-Content data/curated_train.jsonl | ForEach-Object { try { $_ | ConvertFrom-Json | Out-Null; $ok++ } catch { $bad++ } }
+"ok=$ok bad=$bad"
+
+# CSV row counts
+(Import-Csv eval/baseline_scores.csv).Count
+(Import-Csv eval/finetuned_scores.csv).Count
 ```
 
-## Notes
+Expected outcomes:
 
-- Adapter/model binaries are intentionally excluded from this repo.
-- This repository focuses on data quality, reproducible config, and structured evaluation artifacts.
+- JSONL valid lines: `80`
+- Baseline score rows: `20`
+- Fine-tuned score rows: `20`
 
 ## Submission Compliance Checklist
 
-- `schema/` includes `invoice_schema.md` and `po_schema.md`.
-- `data/` includes `curated_train.jsonl` and `curation_log.md`.
-- `training_config.md` documents and justifies LoRA hyperparameters.
-- `screenshots/` includes `training_config.png` and `loss_curve.png`.
-- `eval/` includes baseline/fine-tuned responses, CSV scores, summary/comparison, and five failure analyses.
-- `prompts/` includes prompt engineering iterations and evaluation.
-- `report.md` provides final prompting-vs-fine-tuning analysis.
-- No large model files or adapter weights are committed.
-
-## Evaluation Readiness
-
-- Structural integrity: JSONL and CSV artifacts are present and formatted for automated checks.
-- Process rigor: curation decisions, hyperparameter rationale, and before-vs-after analysis are fully documented.
-- Failure depth: individual failure files capture root causes and data-centric remediation steps.
-- Documentation quality: repository is organized for quick review and reproducibility.
+- `schema/` includes `invoice_schema.md` and `po_schema.md`
+- `data/` includes `curated_train.jsonl` and `curation_log.md`
+- `training_config.md` provides hyperparameter decisions and rationale
+- `screenshots/` includes `training_config.png` and `loss_curve.png`
+- `eval/` includes responses, CSV scores, summary, comparison, and failure analyses
+- `prompts/` includes prompt iterations and prompt evaluation
+- `report.md` contains final prompting vs fine-tuning analysis
+- No large model files or adapter weights are committed
 
 ## GitHub Pages
 
-- A deployment workflow is provided at `.github/workflows/pages.yml`.
-- Static site content is hosted from `docs/` (`docs/index.html`, `docs/styles.css`).
-- On every push to `main`, GitHub Actions builds and deploys the site to GitHub Pages.
-- In repository settings, ensure Pages source is set to **GitHub Actions**.
-- Site URL format: `https://<your-github-username>.github.io/<your-repo-name>/`.
+- Deployment workflow: `.github/workflows/pages.yml`
+- Static site source: `docs/`
+- Trigger: push to `main`
+- Required setting: Repository Settings -> Pages -> Source = **GitHub Actions**
+- Site URL format: `https://<your-github-username>.github.io/<your-repo-name>/`
+
+## Additional Documentation
+
+- Architecture details: `architecture.md`
+- Full technical documentation: `projectdocumentation.md`
+- Prompting vs fine-tuning analysis: `report.md`
