@@ -11,35 +11,69 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+  <div class="ambient ambient-a" aria-hidden="true"></div>
+  <div class="ambient ambient-b" aria-hidden="true"></div>
+
   <main class="wrap">
     <section class="hero">
-      <h1>Structured Output Fine-Tuning:<br>Llama 3.2 for Reliable JSON Extraction</h1>
+      <p class="eyebrow">STRUCTURED OUTPUT FINE-TUNING</p>
+      <h1>Llama 3.2 for Reliable JSON Extraction</h1>
       <p>
         This project fine-tunes Llama-3.2-3B-Instruct with LoRA to convert unstructured invoices and purchase orders
         into machine-parseable JSON for production automation workflows.
       </p>
-      <span class="badge">Model: Llama 3.2 3B</span>
-      <span class="badge">Method: LoRA SFT</span>
-      <span class="badge">Framework: LlamaFactory</span>
+      <div class="badge-row">
+        <span class="badge">Model: Llama 3.2 3B</span>
+        <span class="badge">Method: LoRA SFT</span>
+        <span class="badge">Framework: LlamaFactory</span>
+        <span class="badge">Task: Invoice + PO JSON</span>
+      </div>
 
       <div class="metrics">
-        <article class="metric">
-          <strong>45%</strong>
-          Baseline parse success
+        <article class="metric pop">
+          <span class="metric-label">Baseline Parse Success</span>
+          <strong data-count="45">45%</strong>
         </article>
-        <article class="metric">
-          <strong>95%</strong>
-          Fine-tuned parse success
+        <article class="metric pop">
+          <span class="metric-label">Fine-Tuned Parse Success</span>
+          <strong data-count="95">95%</strong>
         </article>
-        <article class="metric">
-          <strong>+50 pts</strong>
-          Absolute improvement
+        <article class="metric pop">
+          <span class="metric-label">Absolute Improvement</span>
+          <strong data-count="50">+50 pts</strong>
         </article>
+      </div>
+
+      <div class="improvement-track" aria-label="Improvement visualization">
+        <div class="improvement-baseline">Baseline 45%</div>
+        <div class="improvement-finetuned">Fine-Tuned 95%</div>
       </div>
     </section>
 
-    <section class="grid" aria-label="Artifacts">
-      <article class="card">
+    <section class="card timeline" aria-label="Execution timeline">
+      <h3>Execution Timeline</h3>
+      <ol>
+        <li><span>01</span> Define invoice and purchase-order schemas</li>
+        <li><span>02</span> Curate 80 training examples with diversity constraints</li>
+        <li><span>03</span> Run baseline inference and score outputs</li>
+        <li><span>04</span> Fine-tune with LoRA in LlamaFactory</li>
+        <li><span>05</span> Re-run evaluation, compare metrics, analyze failures</li>
+      </ol>
+    </section>
+
+    <section class="card controls" aria-label="Artifact filters">
+      <h3>Interactive Artifact Explorer</h3>
+      <div class="filter-row">
+        <button class="filter-btn active" type="button" data-filter="all">All</button>
+        <button class="filter-btn" type="button" data-filter="schema">Schema</button>
+        <button class="filter-btn" type="button" data-filter="data">Data</button>
+        <button class="filter-btn" type="button" data-filter="eval">Evaluation</button>
+        <button class="filter-btn" type="button" data-filter="method">Methodology</button>
+      </div>
+    </section>
+
+    <section class="grid artifacts" aria-label="Artifacts">
+      <article class="card artifact-card" data-group="schema">
         <h3>Schema</h3>
         <ul>
           <li>schema/invoice_schema.md</li>
@@ -47,15 +81,16 @@
         </ul>
       </article>
 
-      <article class="card">
+      <article class="card artifact-card" data-group="data">
         <h3>Data</h3>
         <ul>
           <li>data/curated_train.jsonl</li>
           <li>data/curation_log.md</li>
+          <li>Diversity: missing optionals, multi-item, non-USD</li>
         </ul>
       </article>
 
-      <article class="card">
+      <article class="card artifact-card" data-group="eval">
         <h3>Evaluation</h3>
         <ul>
           <li>eval/baseline_scores.csv</li>
@@ -65,7 +100,7 @@
         </ul>
       </article>
 
-      <article class="card">
+      <article class="card artifact-card" data-group="method">
         <h3>Methodology</h3>
         <ul>
           <li>training_config.md</li>
@@ -78,14 +113,18 @@
 
     <section class="card shot-section" aria-label="Screenshots">
       <h3>Screenshots</h3>
-      <p>Training artifacts used in submission documentation.</p>
+      <p>Click any screenshot to inspect details in full-screen preview.</p>
       <div class="shot-grid">
         <figure>
-          <img src="screenshots/training_config.png" alt="LlamaFactory training configuration screenshot" loading="lazy">
+          <button class="shot-btn" type="button" data-image="screenshots/training_config.png" data-title="Training Configuration">
+            <img src="screenshots/training_config.png" alt="LlamaFactory training configuration screenshot" loading="lazy">
+          </button>
           <figcaption>training_config.png</figcaption>
         </figure>
         <figure>
-          <img src="screenshots/loss_curve.png" alt="LlamaFactory loss curve screenshot" loading="lazy">
+          <button class="shot-btn" type="button" data-image="screenshots/loss_curve.png" data-title="Loss Curve">
+            <img src="screenshots/loss_curve.png" alt="LlamaFactory loss curve screenshot" loading="lazy">
+          </button>
           <figcaption>loss_curve.png</figcaption>
         </figure>
       </div>
@@ -95,5 +134,15 @@
       Full project documentation is available in README.md, architecture.md, and projectdocumentation.md within this repository.
     </p>
   </main>
+
+  <dialog id="lightbox" class="lightbox" aria-label="Screenshot preview">
+    <form method="dialog" class="lightbox-bar">
+      <p id="lightbox-title">Preview</p>
+      <button type="submit" aria-label="Close preview">Close</button>
+    </form>
+    <img id="lightbox-image" src="" alt="Screenshot preview">
+  </dialog>
+
+  <script src="app.js"></script>
 </body>
 </html>
